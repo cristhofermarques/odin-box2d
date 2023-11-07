@@ -5,11 +5,11 @@ package box2d
 Query_Callback_Fcn :: #type proc "c" (shape_id: Shape_ID, context_: rawptr) -> bool
 
 when ODIN_OS == .Windows && ODIN_ARCH == .amd64 && ODIN_DEBUG do foreign import box2d {
-    "binaries/box2d_windows_amd64_debug.lib",
+    "binaries/windows_amd64_debug/box2d.lib",
 }
 
 when ODIN_OS == .Windows && ODIN_ARCH == .amd64 && !ODIN_DEBUG do foreign import box2d {
-    "binaries/box2d_windows_amd64_release.lib",
+    "binaries/windows_amd64_release/box2d.lib",
 }
 
 foreign box2d

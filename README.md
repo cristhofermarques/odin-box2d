@@ -2,7 +2,7 @@
 
 Odin bindings of Box2D V3 https://github.com/erincatto/box2c
 
-Commit: https://github.com/erincatto/box2c/commit/a0a9c6e72c9f2174fdf6582c5d4ba60f5343b2ba
+Commit: https://github.com/erincatto/box2c/commit/90d971e299889bd771fd2ef9324bd8ad81e4ca12
 
 # Example:
 
