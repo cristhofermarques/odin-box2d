@@ -41,7 +41,7 @@ End_Contact_Fcn :: #type proc "c" (shape_id_a, shape_id_b: Shape_ID, context_: r
 // the next step.
 // - the supplied manifold has impulse values from the previous frame
 Pre_Solve_Fcn :: #type proc "c" (shape_id_a, shape_id_b: Shape_ID, manifold: ^Manifold, context_: rawptr) -> bool
-//BOX2D_API void b2World_SetPreSolveCallback(b2WorldId worldId, b2PreSolveFcn* fcn, void* context);
+world_set_pre_solve_callback :: proc "c" (world_id: World_ID, fcn: Pre_Solve_Fcn, context_: rawptr)
 
 // This lets you inspect a contact after the solver is finished. This is useful
 // for inspecting impulses.
@@ -50,7 +50,7 @@ Pre_Solve_Fcn :: #type proc "c" (shape_id_a, shape_id_b: Shape_ID, manifold: ^Ma
 // in a separate data structure.
 // Note: this is only called for contacts that are touching, solid, and awake.
 Post_Solve_Fcn :: #type proc "c" (shape_id_a, shape_id_b: Shape_ID, manifold: ^Manifold, context_: rawptr)
-//BOX2D_API void b2World_SetPostSolveCallback(b2WorldId worldId, b2PostSolveFcn* fcn, void* context);
+world_set_post_solve_callback :: proc "c" (world_id: World_ID, fcn: Post_Solve_Fcn, context_: rawptr)
 
 World_Callbacks :: struct
 {

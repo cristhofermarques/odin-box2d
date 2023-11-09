@@ -1,5 +1,56 @@
 package box2d
 
+// Distance joint definition. This requires defining an anchor point on both
+// bodies and the non-zero distance of the distance joint. The definition uses
+// local anchor points so that the initial configuration can violate the
+// constraint slightly. This helps when saving and loading a game.
+Distance_Joint_Def :: struct
+{
+	// The first attached body.
+	body_id_a: Body_ID,
+
+	// The second attached body.
+	body_id_b: Body_ID,
+
+	// The local anchor point relative to bodyA's origin.
+	local_anchor_a: Vec2,
+
+	// The local anchor point relative to bodyB's origin.
+	local_anchor_b: Vec2,
+
+	// The rest length of this joint. Clamped to a stable minimum value.
+	length: f32,
+
+	// Minimum length. Clamped to a stable minimum value.
+	min_length: f32,
+
+	// Maximum length. Must be greater than or equal to the minimum length.
+	max_length: f32,
+
+	/// The linear stiffness hertz (cycles per second)
+	hertz: f32,
+
+	// The linear damping ratio (non-dimensional)
+	damping_ratio: f32,
+
+	// Set this flag to true if the attached bodies should collide.
+	collide_connected: bool,
+
+}
+
+DEFAULT_DISTANCE_JOINT_DEF :: Distance_Joint_Def {
+	NULL_BODY_ID,
+	NULL_BODY_ID,
+	{0, 0},
+	{0, 0},
+	1,
+	0,
+	HUGE,
+	0,
+	0,
+	false,
+}
+
 // A mouse joint is used to make a point on a body track a
 // specified world point. This a soft constraint with a maximum
 // force. This allows the constraint to stretch without
