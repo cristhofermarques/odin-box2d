@@ -1,10 +1,10 @@
 package box2d
 
 // 2D vector
-Vec2 :: struct
-{
-	x, y: f32,
-}
+Vec2 :: [2]f32
+
+// 3D vector
+Vec3 :: [3]f32
 
 // 2D rotation
 Rot :: struct
@@ -27,6 +27,13 @@ Mat22 :: struct
 	cx, cy: Vec2,
 }
 
+// A 3-by-3 Matrix
+Mat33 :: struct
+{
+	// columns
+	cx, cy, cz: Vec3,
+}
+
 // Axis-aligned bounding box
 AABB :: struct
 {
@@ -39,7 +46,7 @@ Ray_Cast_Input :: struct
 {
 	p1, p2: Vec2,
 	radius,
-	maxFraction: f32,
+	max_fraction: f32,
 }
 
 // Ray-cast output data. The ray hits at p1 + fraction * (p2 - p1), where p1 and p2 come from b2RayCastInput.
@@ -57,17 +64,17 @@ Ray_Cast_Output :: struct
 // The task spans a range of the parallel-for: [startIndex, endIndex)
 // The thread index must correctly identify each thread in the user thread pool, expected in [0, workerCount)
 // The task context is the context pointer sent from Box2D when it is enqueued.
-Task_Callback :: #type proc "c" (startIndex, endIndex: i32, threadIndex: u32, taskContext: rawptr)
+Task_Callback :: #type proc "c" (start_index, end_index: i32, thread_index: u32, task_context: rawptr)
 
 // These functions can be provided to Box2D to invoke a task system. These are designed to work well with enkiTS.
 // Returns a pointer to the user's task object. May be nullptr.
-Enqueue_Task_Callback :: #type proc "c" (task: Task_Callback, itemCount, minRange: i32, taskContext, userContext: rawptr) -> rawptr
+Enqueue_Task_Callback :: #type proc "c" (task: Task_Callback, item_count, min_range: i32, task_context, user_context: rawptr) -> rawptr
 
 // Finishes a user task object that wraps a Box2D task.
-Finish_Task_Callback :: #type proc "c" (userTask, userContext: rawptr)
+Finish_Task_Callback :: #type proc "c" (user_task, user_context: rawptr)
 
 // Finishes all tasks.
-Finish_All_Tasks_Callback :: #type proc "c" (userContext: rawptr)
+Finish_All_Tasks_Callback :: #type proc "c" (user_context: rawptr)
 
 World_Def :: struct
 {
@@ -76,35 +83,43 @@ World_Def :: struct
 
 	// Restitution velocity threshold, usually in m/s. Collisions above this
 	// speed have restitution applied (will bounce).
-	restitutionThreshold: f32,
+	restitution_threshold: f32,
+
+	// This parameter controls how fast overlap is resolved and has units of meters per second
+	contact_pushout_velocity: f32,
+
+	// Contact stiffness. Cycles per second.
+	contact_hertz: f32,
+
+	/// Contact bounciness. Non-dimensional.
+	contact_damping_ratio: f32,
 
 	// Can bodies go to sleep to improve performance
-	enableSleep: bool,
+	enable_sleep: bool,
 
 	// Capacity for bodies. This may not be exceeded.
-	bodyCapacity,
+	body_capacity,
 
 	// initial capacity for shapes
-	shapeCapacity,
+	shape_capacity,
 
 	// Capacity for contacts. This may not be exceeded.
-	contactCapacity,
+	contact_capacity,
 
 	// Capacity for joints
-	jointCapacity,
+	joint_capacity,
 
 	// Stack allocator capacity. This controls how much space box2d reserves for per-frame calculations.
 	// Larger worlds require more space. b2Statistics can be used to determine a good capacity for your
 	// application.
-	stackAllocatorCapacity: i32,
+	stack_allocator_capacity: i32,
 
 	// task system hookup
-	workerCount: u32,
-	enqueueTask: Enqueue_Task_Callback,
-	finishTask: Finish_Task_Callback,
-	finishAllTasks: Finish_All_Tasks_Callback,
-	userTaskContext: rawptr,
-
+	worker_count: u32,
+	enqueue_task: Enqueue_Task_Callback,
+	finish_task: Finish_Task_Callback,
+	finish_all_tasks: Finish_All_Tasks_Callback,
+	user_task_context: rawptr,
 }
 
 // The body type.
@@ -134,62 +149,62 @@ Body_Def :: struct
 	angle: f32,
 
 	// The linear velocity of the body's origin in world co-ordinates.
-	linearVelocity: Vec2,
+	linear_velocity: Vec2,
 
 	// The angular velocity of the body.
-	angularVelocity,
+	angular_velocity,
 
 	// Linear damping is use to reduce the linear velocity. The damping parameter
 	// can be larger than 1.0f but the damping effect becomes sensitive to the
 	// time step when the damping parameter is large.
-	linearDamping,
+	linear_damping,
 
 	// Angular damping is use to reduce the angular velocity. The damping parameter
 	// can be larger than 1.0f but the damping effect becomes sensitive to the
 	// time step when the damping parameter is large.
-	angularDamping,
+	angular_damping,
 
 	// Scale the gravity applied to this body.
-	gravityScale: f32,
+	gravity_scale: f32,
 
 	// Use this to store application specific body data.
-	userData: rawptr,
+	user_data: rawptr,
 
 	// Set this flag to false if this body should never fall asleep. Note that
 	// this increases CPU usage.
-	enableSleep,
+	enable_sleep,
 
 	// Is this body initially awake or sleeping?
-	isAwake,
+	is_awake,
 
 	// Should this body be prevented from rotating? Useful for characters.
-	fixedRotation,
+	fixed_rotation,
 
 	// Does this body start out enabled?
-	isEnabled: bool
+	is_enabled: bool
 }
 
 // This holds contact filtering data.
 Filter :: struct
 {
 	// The collision category bits. Normally you would just set one bit.
-	categoryBits,
+	category_bits,
 
 	// The collision mask bits. This states the categories that this
 	// shape would accept for collision.
-	maskBits: u32,
+	mask_bits: u32,
 
 	// Collision groups allow a certain group of objects to never collide (negative)
 	// or always collide (positive). Zero means no collision group. Non-zero group
 	// filtering always wins against the mask bits.
-	groupIndex: i32,
+	group_index: i32,
 }
 
 // Used to create a shape
 Shape_Def :: struct
 {
 	// Use this to store application specific shape data.
-	userData: rawptr,
+	user_data: rawptr,
 
 	// The friction coefficient, usually in the range [0,1].
 	friction,
@@ -205,7 +220,7 @@ Shape_Def :: struct
 
 	// A sensor shape collects contact information but never generates a collision
 	// response.
-	isSensor: bool,
+	is_sensor: bool,
 
 }
 
@@ -213,8 +228,11 @@ DEFAULT_FILTER :: Filter{0x00000001, 0xFFFFFFFF, 0}
 
 // Make a world definition with default values.
 DEFAULT_WORLD_DEF :: World_Def{
-	Vec2{0, -10},
+	{0, -10},
 	1.0 * 1,
+	3.0 * 1,
+	30.0,
+	1.0,
 	true,
 	8,
 	8,

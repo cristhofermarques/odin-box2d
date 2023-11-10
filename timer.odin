@@ -27,6 +27,7 @@ Statistics :: struct
 	stack_capacity,
 	stack_used,
 	byte_count: i32,
+	colors_count: [GRAPH_COLORS_COUNT + 1]i32,
 }
 
 when ODIN_OS == .Windows

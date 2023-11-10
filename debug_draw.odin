@@ -34,9 +34,13 @@ Debug_Draw :: struct
 	// Draw a point.
     draw_point: proc "c" (p: Vec2, size: f32, color: Color, context_: rawptr),
 
+	// Draw a string.
+	draw_string: proc "c" (p: Vec2, s: cstring, context_: rawptr),
+
 	draw_shapes,
 	draw_joints,
 	draw_aabbs,
-	draw_coms,
+	draw_mass,
+	draw_graph_colors: bool,
 	context_: rawptr,
 }
