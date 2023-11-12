@@ -13,7 +13,10 @@ when ODIN_OS == .Windows && ODIN_ARCH == .amd64 && !ODIN_DEBUG do foreign import
 }
 
 foreign box2d
-{    
+{
+    @(link_name="b2_parallel")
+    parallel: bool
+
     /* constants.h */
 
     // Current version.
