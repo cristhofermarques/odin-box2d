@@ -9,7 +9,7 @@ Commit: https://github.com/erincatto/box2c/commit/8052efea4585297359ba1bb5bd0698
 ```odin
 package box2d_example
 
-import b2 "box2d"
+import b2 "odin-box2d"
 import "core:fmt"
 
 main :: proc()
