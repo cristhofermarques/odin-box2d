@@ -52,7 +52,7 @@ Distance_Output :: struct
 }
 
 // Input parameters for b2ShapeCast
-Shape_Cast_Input :: struct
+Shape_Cast_Pair_Input :: struct
 {
 	proxy_a,
 	proxy_b: Distance_Proxy,

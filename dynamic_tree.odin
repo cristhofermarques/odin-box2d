@@ -39,7 +39,7 @@ Tree_Node :: struct
 // Nodes are pooled and relocatable, so I use node indices rather than pointers.
 Dynamic_Tree :: struct
 {
-	nodes: ^Tree_Node,
+	nodes: [^]Tree_Node,
 
 	root,
 	node_count,
@@ -47,9 +47,27 @@ Dynamic_Tree :: struct
 	free_list,
 	proxy_count: i32,
 
-	leaf_indices: ^i32,
-	leaf_boxes: ^AABB,
-	leaf_centers: ^Vec2,
-	bin_indices: ^i32,
+	leaf_indices: [^]i32,
+	leaf_boxes: [^]AABB,
+	leaf_centers: [^]Vec2,
+	bin_indices: [^]i32,
 	rebuild_capacity: i32,
 }
+
+// This function receives proxies found in the AABB query.
+// @return true if the query should continue
+Tree_Query_Callback_Fcn :: #type proc "c" (proxy_id, user_data: i32, context_: rawptr) -> bool
+
+// This function receives clipped raycast input for a proxy. The function
+// returns the new ray fraction.
+// - return a value of 0 to terminate the ray cast
+// - return a value less than input->maxFraction to clip the ray
+// - return a value of input->maxFraction to continue the ray cast without clipping
+Tree_Ray_Cast_Callback_Fcn :: #type proc "c" (input: ^Ray_Cast_Input, proxy_id, user_data: i32, context_: rawptr) -> f32
+
+// This function receives clipped raycast input for a proxy. The function
+// returns the new ray fraction.
+// - return a value of 0 to terminate the ray cast
+// - return a value less than input->maxFraction to clip the ray
+// - return a value of input->maxFraction to continue the ray cast without clipping
+Tree_Shape_Cast_Callback_Fcn :: #type proc "c" (input: ^Shape_Cast_Input, proxy_id, user_data: i32, context_: rawptr) -> f32

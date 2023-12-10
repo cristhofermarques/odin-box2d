@@ -4,13 +4,13 @@ package box2d
 Debug_Draw :: struct
 {
 	// Draw a closed polygon provided in CCW order.
-    draw_polygon: proc "c" (vertices: ^Vec2, vertex_count: i32, color: Color, context_: rawptr),
+    draw_polygon: proc "c" (vertices: [^]Vec2, vertex_count: i32, color: Color, context_: rawptr),
 
 	// Draw a solid closed polygon provided in CCW order.
-    draw_solid_polygon: proc "c" (vertices: ^Vec2, vertex_count: i32, color: Color, context_: rawptr),
+    draw_solid_polygon: proc "c" (vertices: [^]Vec2, vertex_count: i32, color: Color, context_: rawptr),
 
 	// Draw a rounded polygon provided in CCW order.
-    draw_rounded_polygon: proc "c" (vertices: ^Vec2, vertex_count: i32, radius: f32, line_color, fill_color: Color, context_: rawptr),
+    draw_rounded_polygon: proc "c" (vertices: [^]Vec2, vertex_count: i32, radius: f32, line_color, fill_color: Color, context_: rawptr),
     
 	// Draw a circle.
     draw_circle: proc "c" (center: Vec2, radius: f32, color: Color, context_: rawptr),

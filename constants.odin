@@ -45,7 +45,7 @@ MAX_WORLDS :: #config(BOX2D_MAX_WORLDS, 32)
 // The maximum linear translation of a body per step. This limit is very large and is used
 // to prevent numerical problems. You shouldn't need to adjust this. Meters.
 // @warning modifying this can have a significant impact on stability
-MAX_TRANSLATION :: 20.0 * LENGTH_UNITS_PER_METER
+MAX_TRANSLATION :: 4.0 * LENGTH_UNITS_PER_METER
 MAX_TRANSLATION_SQUARED :: MAX_TRANSLATION * MAX_TRANSLATION
 
 // The maximum angular velocity of a body. This limit is very large and is used
@@ -69,7 +69,7 @@ ANGULAR_SLEEP_TOLERANCE :: #config(BOX2D_ANGULAR_SLEEP_TOLERANCE, 2 / 180 * PI)
 
 // Used to detect bad values. Positions greater than about 16km will have precision
 // problems, so 100km as a limit should be fine in all cases.
-HUGE :: 100_000 * LENGTH_UNITS_PER_METER
+HUGE :: 100_000.0 * LENGTH_UNITS_PER_METER
 
 // Maximum parallel workers. Used to size some static arrays.
 MAX_WORKERS :: 64

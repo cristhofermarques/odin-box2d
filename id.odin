@@ -37,10 +37,18 @@ Joint_ID :: struct
 	revision: u16,
 }
 
+Chain_ID :: struct
+{
+	index: i32,
+	world: i16,
+	revision: u16,
+}
+
 NULL_WORLD_ID :: World_ID{-1, 0}
 NULL_BODY_ID :: Body_ID{-1, -1, 0};
 NULL_SHAPE_ID :: Shape_ID{-1, -1, 0};
 NULL_JOINT_ID :: Joint_ID{-1, -1, 0};
+NULL_CHAIN_ID :: Chain_ID{-1, -1, 0};
 
 is_null :: #force_inline proc "contextless" (id: $T) -> bool
 {

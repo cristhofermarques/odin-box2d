@@ -49,6 +49,15 @@ Ray_Cast_Input :: struct
 	max_fraction: f32,
 }
 
+Shape_Cast_Input :: struct
+{
+	points: [MAX_POLYGON_VERTICES]Vec2,
+	count: i32,
+	radius: f32,
+	translation: Vec2,
+	max_fraction: f32,
+}
+
 // Ray-cast output data. The ray hits at p1 + fraction * (p2 - p1), where p1 and p2 come from b2RayCastInput.
 Ray_Cast_Output :: struct
 {
@@ -200,6 +209,19 @@ Filter :: struct
 	group_index: i32,
 }
 
+// This holds contact filtering data.
+Query_Filter :: struct
+{
+	// The collision category bits. Normally you would just set one bit.
+	category_bits,
+
+	// The collision mask bits. This states the categories that this
+	// shape would accept for collision.
+	mask_bits: u32,
+}
+
+DEFAULT_QUERY_FILTER :: Query_Filter{0x00000001, 0xFFFFFFFF};
+
 // Used to create a shape
 Shape_Def :: struct
 {
@@ -225,6 +247,42 @@ Shape_Def :: struct
 }
 
 DEFAULT_FILTER :: Filter{0x00000001, 0xFFFFFFFF, 0}
+
+// Used to create a chain of edges. This is designed to eliminate ghost collisions with some limitations.
+// - DO NOT use chain shapes unless you understand the limitations. This is an advanced feature!
+// - chains are one-sided
+// - chains have no mass and should be used on static bodies
+// - the front side of the chain points the right of the point sequence
+// - chains are either a loop or open
+// - a chain must have at least 4 points
+// - the distance between any two points must be greater than b2_linearSlop
+// - a chain shape should not self intersect (this is not validated)
+// - an open chain shape has NO COLLISION on the first and final edge
+// - you may overlap two open chains on their first three and/or last three points to get smooth collision
+// - a chain shape creates multiple hidden shapes on the body
+Chain_Def :: struct
+{
+	// An array of at least 4 points. These are cloned and may be temporary.
+	points: [^]Vec2,
+
+	// The point count, must be 4 or more.
+	count: u32,
+
+	// Indicates a closed chain formed by connecting the first and last points
+	loop: bool,
+
+	// Use this to store application specific shape data.
+	user_data: rawptr,
+
+	// The friction coefficient, usually in the range [0,1].
+	friction,
+
+	// The restitution (elasticity) usually in the range [0,1].
+	restitution: f32,
+
+	// Contact filtering data.
+	filter: Filter,
+}
 
 // Make a world definition with default values.
 DEFAULT_WORLD_DEF :: World_Def{
@@ -263,11 +321,21 @@ DEFAULT_BODY_DEF :: Body_Def{
 	true,
 }
 
-DEFAULT_SHAPE_DEF :: Shape_Def{
+DEFAULT_SHAPE_DEF :: Shape_Def {
 	nil,
 	0.6,
 	0,
 	0,
 	DEFAULT_FILTER,
 	false,
+}
+
+DEFAULT_CHAIN_DEF :: Chain_Def {
+	nil,
+	0,
+	false,
+	nil,
+	0.6,
+	0.0,
+	DEFAULT_FILTER,
 }

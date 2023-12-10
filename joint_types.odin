@@ -35,7 +35,6 @@ Distance_Joint_Def :: struct
 
 	// Set this flag to true if the attached bodies should collide.
 	collide_connected: bool,
-
 }
 
 DEFAULT_DISTANCE_JOINT_DEF :: Distance_Joint_Def {

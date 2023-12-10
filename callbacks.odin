@@ -41,7 +41,7 @@ End_Contact_Fcn :: #type proc "c" (shape_id_a, shape_id_b: Shape_ID, context_: r
 // the next step.
 // - the supplied manifold has impulse values from the previous frame
 Pre_Solve_Fcn :: #type proc "c" (shape_id_a, shape_id_b: Shape_ID, manifold: ^Manifold, context_: rawptr) -> bool
-world_set_pre_solve_callback :: proc "c" (world_id: World_ID, fcn: Pre_Solve_Fcn, context_: rawptr)
+//TODO: world_set_pre_solve_callback :: proc "c" (world_id: World_ID, fcn: Pre_Solve_Fcn, context_: rawptr)
 
 // This lets you inspect a contact after the solver is finished. This is useful
 // for inspecting impulses.
@@ -50,7 +50,7 @@ world_set_pre_solve_callback :: proc "c" (world_id: World_ID, fcn: Pre_Solve_Fcn
 // in a separate data structure.
 // Note: this is only called for contacts that are touching, solid, and awake.
 Post_Solve_Fcn :: #type proc "c" (shape_id_a, shape_id_b: Shape_ID, manifold: ^Manifold, context_: rawptr)
-world_set_post_solve_callback :: proc "c" (world_id: World_ID, fcn: Post_Solve_Fcn, context_: rawptr)
+//TODO: world_set_post_solve_callback :: proc "c" (world_id: World_ID, fcn: Post_Solve_Fcn, context_: rawptr)
 
 World_Callbacks :: struct
 {
@@ -67,7 +67,7 @@ World_Callbacks :: struct
 // See b2World_Query
 // Called for each shape found in the query AABB.
 // @return false to terminate the query.
-Query_Result_Fcn :: #type proc "c" (shape_id: Shape_ID) -> bool
+Query_Result_Fcn :: #type proc "c" (shape_id: Shape_ID, context_: rawptr) -> bool
 
 // Callback class for ray casts.
 // See b2World::RayCast
@@ -83,4 +83,22 @@ Query_Result_Fcn :: #type proc "c" (shape_id: Shape_ID) -> bool
 // @param fraction the fraction along the ray at the point of intersection
 // @return -1 to filter, 0 to terminate, fraction to clip the ray for
 // closest hit, 1 to continue
-Ray_Result_Fcn :: #type proc "c" (shape: Shape_ID, point, normal: Vec2, fraction: f32) -> f32
+Ray_Result_Fcn :: #type proc "c" (shape: Shape_ID, point, normal: Vec2, fraction: f32, context_: rawptr) -> f32
+
+/// Use an instance of this structure and the callback below to get the closest hit.
+Ray_Result :: struct
+{
+	shape_id: Shape_ID,
+	point,
+	normal: Vec2,
+	fraction: f32,
+	hit: bool,
+}
+
+EMPTY_RAY_RESULT :: Ray_Result {
+	NULL_SHAPE_ID,
+	{0, 0},
+	{0, 0},
+	0,
+	false,
+}

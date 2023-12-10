@@ -2,14 +2,14 @@
 
 Odin bindings of Box2D V3 https://github.com/erincatto/box2c
 
-Commit: https://github.com/erincatto/box2c/commit/8052efea4585297359ba1bb5bd06984709de7323
+Commit: https://github.com/erincatto/box2c/commit/b023817fc63a40137f3aed20eb04a8c01f108e9c
 
 # Example:
 
 ```odin
 package box2d_example
 
-import b2 "box2d"
+import b2 "odin-box2d"
 import "core:fmt"
 
 main :: proc()
