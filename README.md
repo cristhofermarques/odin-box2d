@@ -1,8 +1,11 @@
 # Description
 
-Odin bindings of Box2D V3 https://github.com/erincatto/box2c
+Box2D 3.0 https://github.com/erincatto/box2c
 
-Commit: https://github.com/erincatto/box2c/commit/b023817fc63a40137f3aed20eb04a8c01f108e9c
+Current commit: https://github.com/erincatto/box2c/commit/b023817fc63a40137f3aed20eb04a8c01f108e9c
+
+Included platform binaries
+* windows_amd64
 
 # Example:
 
