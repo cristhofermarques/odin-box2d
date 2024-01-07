@@ -37,16 +37,16 @@ main :: proc()
     
     ground_body_def := b2.DEFAULT_BODY_DEF
     ground_body_def.position = b2.Vec2{0, -10}
-    ground_body_id := b2.world_create_body(world_id, &ground_body_def)
+    ground_body_id := b2.create_body(world_id, &ground_body_def)
 
     ground_box := b2.make_box(50, 10)
     ground_shape_def := b2.DEFAULT_SHAPE_DEF
-    b2.body_create_polygon(ground_body_id, &ground_shape_def, &ground_box)
+    b2.create_polygon_shape(ground_body_id, &ground_shape_def, &ground_box)
 
     body_def := b2.DEFAULT_BODY_DEF
     body_def.type = .Dynamic
     body_def.position = b2.Vec2{0, 4}
-    body_id := b2.world_create_body(world_id, &body_def)
+    body_id := b2.create_body(world_id, &body_def)
 
     shape_def := b2.DEFAULT_SHAPE_DEF
     shape_def.density = 1
@@ -54,11 +54,11 @@ main :: proc()
 
     circle: b2.Circle
     circle.radius = 1
-    b2.body_create_circle(body_id, &shape_def, &circle)
+    b2.create_circle_shape(body_id, &shape_def, &circle)
 
-    time_step: f32 = 1.0 / 60.0
-    velocity_iterations: i32 = 6
-    position_iterations: i32 = 2
+    time_step: f32 = 1.0 / 60
+    velocity_iterations: i32 = 8
+    position_iterations: i32 = 3
     
     for i in 0..<60
     {
