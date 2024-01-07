@@ -2,7 +2,7 @@ package box2d
 
 // This function receives shapes found in the AABB query.
 // @return true if the query should continue
-Query_Callback_Fcn :: #type proc(shape_id: Shape_ID, context_: rawptr) -> bool
+Query_Callback_Fcn :: #type proc "c" (shape_id: Shape_ID, context_: rawptr) -> bool
 
 when ODIN_OS == .Windows && ODIN_ARCH == .amd64 do foreign import box2d {
     "binaries/box2d_windows_amd64.lib",
