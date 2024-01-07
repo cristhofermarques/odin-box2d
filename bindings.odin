@@ -68,7 +68,7 @@ foreign box2d
     @(link_name="b2Body_GetLocalPoint")
     body_get_local_point :: proc "c" (body_id: Body_ID, global_point: Vec2) -> Vec2 ---
 
-    @(link_name="b2Body_GetWorlPoint")
+    @(link_name="b2Body_GetWorldPoint")
     body_get_world_point :: proc "c" (body_id: Body_ID, local_point: Vec2) -> Vec2 ---
 
 
