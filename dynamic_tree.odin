@@ -32,11 +32,15 @@ Tree_Node :: struct
 }
 
 // A dynamic AABB tree broad-phase, inspired by Nathanael Presson's btDbvt.
+//
 // A dynamic tree arranges data in a binary tree to accelerate
-// queries such as volume queries and ray casts. Leaf nodes are proxies
-// with an AABB. These are used to hold a user collision object, such as a reference to a Shape.
+// queries such as AABB queries and ray casts. Leaf nodes are proxies
+// with an AABB. These are used to hold a user collision object, such as a reference to a b2Shape.
 //
 // Nodes are pooled and relocatable, so I use node indices rather than pointers.
+//
+// The dynamic tree is made available for advanced users that would like to use it to organize
+// spatial game data besides rigid bodies.
 Dynamic_Tree :: struct
 {
 	nodes: [^]Tree_Node,
@@ -55,7 +59,7 @@ Dynamic_Tree :: struct
 }
 
 // This function receives proxies found in the AABB query.
-// @return true if the query should continue
+// - return true if the query should continue
 Tree_Query_Callback_Fcn :: #type proc "c" (proxy_id, user_data: i32, context_: rawptr) -> bool
 
 // This function receives clipped raycast input for a proxy. The function
@@ -71,3 +75,16 @@ Tree_Ray_Cast_Callback_Fcn :: #type proc "c" (input: ^Ray_Cast_Input, proxy_id, 
 // - return a value less than input->maxFraction to clip the ray
 // - return a value of input->maxFraction to continue the ray cast without clipping
 Tree_Shape_Cast_Callback_Fcn :: #type proc "c" (input: ^Shape_Cast_Input, proxy_id, user_data: i32, context_: rawptr) -> f32
+
+// Get proxy user data
+// - return the proxy user data or 0 if the id is invalid
+dynamic_tree_get_user_data :: #force_inline proc(tree: ^Dynamic_Tree, proxy_id: i32) -> i32
+{
+	return tree.nodes[proxy_id].user_data;
+}
+
+// Get the AABB of a proxy
+dynamic_tree_get_aabb :: #force_inline proc(tree: ^Dynamic_Tree, proxy_id: i32) -> AABB
+{
+	return tree.nodes[proxy_id].aabb;
+}

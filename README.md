@@ -4,8 +4,21 @@ Box2D 3.0 https://github.com/erincatto/box2c
 
 Current commit: https://github.com/erincatto/box2c/commit/b023817fc63a40137f3aed20eb04a8c01f108e9c
 
-Included platform binaries
+Included platform binaries:
 * windows_amd64
+
+All binaries are build using the default settings.
+All binaries are located in binaries directory if you want to use your own build of Box2D.
+
+Defines for Box2D Constants:
+* BOX2D_LENGTH_UNITS_PER_METER
+* BOX2D_MAX_POLYGON_VERTICES
+* BOX2D_MAX_WORLDS
+* BOX2D_TIME_TO_SLEEP
+* BOX2D_LINEAR_SLEEP_TOLERANCE
+* BOX2D_ANGULAR_SLEEP_TOLERANCE
+
+Only change it if you build your own version using diferent constant values.
 
 # Example:
 

@@ -1,18 +1,13 @@
 package box2d
 
-Alloc_Fcn :: #type proc "c" (size: u32) -> rawptr
+// Prototype for user allocation function.
+// * 'size' the allocation size in bytes
+// * 'alignment' the required alignment, guaranteed to be a power of 2
+Alloc_Fcn :: #type proc "c" (size: u32, alignment: i32) -> rawptr
+
+// Prototype for user free function.
+// * "mem' the memory previously allocated through `b2AllocFcn`
 Free_Fcn :: #type proc "c" (mem: rawptr)
 
-// Return 0 to
-Assert_Fcn :: #type proc "c" (condition, file_name: cstring, line_number: u32) -> u32
-
-// /// Default allocation functions
-//TODO: void b2SetAllocator(b2AllocFcn* allocFcn, b2FreeFcn* freeFcn);
-
-// /// Total bytes allocated by Box2D
-//TODO: int b2GetByteCount(void);
-
-
-// Export 'Box2DAssertCallback' symbol
-@(export, link_name="Box2DAssertCallback")
-box2d_assert_callback: Assert_Fcn
+// Prototype for the user assert callback. Return 0 to skip the debugger break.
+Assert_Fcn :: #type proc "c" (condition, file_name: cstring, line_number: i32) -> i32

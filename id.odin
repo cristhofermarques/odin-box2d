@@ -1,12 +1,6 @@
 package box2d
 
-/*
-These ids serve as handles to internal Box2D objects. These should be considered opaque data and passed by value.
-
-Include this header if you need the id definitions and not the whole Box2D API.
-
-References a world instance
-*/
+// References a world instance
 World_ID :: struct
 {
 	index: i16,
@@ -58,4 +52,10 @@ is_null :: #force_inline proc "contextless" (id: $T) -> bool
 non_null :: #force_inline proc "contextless" (id: $T) -> bool
 {
     return id.index != -1
+}
+
+// Compare two ids for equality. Doesn't work for World_ID.
+id_equals :: #force_inline proc "contextless" (id1, id2: $T) -> bool
+{
+    return id1.index == id2.index && id1.world == id2.world && id1.revision == id2.revision
 }

@@ -1,6 +1,64 @@
 package box2d
 
-//typedef struct b2ContactImpulse b2ContactImpulse;
+// Prototype for a pre-solve callback.
+//
+// This is called after a contact is updated. This allows you to inspect a
+// contact before it goes to the solver. If you are careful, you can modify the
+// contact manifold (e.g. disable contact).
+//
+// Notes:
+// - this function must be thread-safe
+// - this is only called if the shape has enabled presolve events
+// - this is called only for awake dynamic bodies
+// - this is not called for sensors
+// - the supplied manifold has impulse values from the previous step
+// - Return false if you want to disable the contact this step
+Pre_Solve_Fcn :: #type proc "c" (shape_id_a, shape_id_b: Shape_ID, manifold: ^Manifold, context_: rawptr) -> bool
+
+// Prototype callback for AABB queries.
+//
+// See world_query
+//
+// Called for each shape found in the query AABB.
+// * Return false to terminate the query.
+Query_Result_Fcn :: #type proc "c" (shape_id: Shape_ID, context_: rawptr) -> bool
+
+// Callback class for ray casts.
+//
+// See world_ray_cast
+//
+// Called for each shape found in the query. You control how the ray cast
+// proceeds by returning a float:
+// * return -1: ignore this shape and continue
+// * return 0: terminate the ray cast
+// * return fraction: clip the ray to this point
+// * return 1: don't clip the ray and continue
+// * param shape the shape hit by the ray
+// * param point the point of initial intersection
+// * param normal the normal vector at the point of intersection
+// * param fraction the fraction along the ray at the point of intersection
+// * return -1 to filter, 0 to terminate, fraction to clip the ray for
+// * closest hit, 1 to continue
+Ray_Result_Fcn :: #type proc "c" (shape: Shape_ID, point, normal: Vec2, fraction: f32, context_: rawptr) -> f32
+
+// Use an instance of this structure and the callback below to get the closest hit.
+Ray_Result :: struct
+{
+	shape_id: Shape_ID,
+	point,
+	normal: Vec2,
+	fraction: f32,
+	hit: bool,
+}
+
+EMPTY_RAY_RESULT :: Ray_Result {
+	NULL_SHAPE_ID,
+	{0, 0},
+	{0, 0},
+	0,
+	false,
+}
+
 
 // Joints and shapes are destroyed when their associated
 // body is destroyed. Implement this listener so that you
@@ -29,19 +87,6 @@ Begin_Contact_Fcn :: #type proc "c" (shape_id_a, shape_id_b: Shape_ID, context_:
 // Called when two shapes cease to touch.
 End_Contact_Fcn :: #type proc "c" (shape_id_a, shape_id_b: Shape_ID, context_: rawptr)
 
-// This is called after a contact is updated. This allows you to inspect a
-// contact before it goes to the solver. If you are careful, you can modify the
-// contact manifold (e.g. disable contact).
-// Notes:
-// - this is called only for awake bodies.
-// - this is called even when the number of contact points is zero.
-// - this is not called for sensors.
-// - if you set the number of contact points to zero, you will not
-// get an EndContact callback. However, you may get a BeginContact callback
-// the next step.
-// - the supplied manifold has impulse values from the previous frame
-Pre_Solve_Fcn :: #type proc "c" (shape_id_a, shape_id_b: Shape_ID, manifold: ^Manifold, context_: rawptr) -> bool
-//TODO: world_set_pre_solve_callback :: proc "c" (world_id: World_ID, fcn: Pre_Solve_Fcn, context_: rawptr)
 
 // This lets you inspect a contact after the solver is finished. This is useful
 // for inspecting impulses.
@@ -50,6 +95,7 @@ Pre_Solve_Fcn :: #type proc "c" (shape_id_a, shape_id_b: Shape_ID, manifold: ^Ma
 // in a separate data structure.
 // Note: this is only called for contacts that are touching, solid, and awake.
 Post_Solve_Fcn :: #type proc "c" (shape_id_a, shape_id_b: Shape_ID, manifold: ^Manifold, context_: rawptr)
+
 //TODO: world_set_post_solve_callback :: proc "c" (world_id: World_ID, fcn: Post_Solve_Fcn, context_: rawptr)
 
 World_Callbacks :: struct
@@ -61,44 +107,4 @@ World_Callbacks :: struct
 	end_contact_fcn: End_Contact_Fcn,
 	pre_solve_fcn: Pre_Solve_Fcn,
 	post_solve_fcn: Post_Solve_Fcn,
-}
-
-// Callback class for AABB queries.
-// See b2World_Query
-// Called for each shape found in the query AABB.
-// @return false to terminate the query.
-Query_Result_Fcn :: #type proc "c" (shape_id: Shape_ID, context_: rawptr) -> bool
-
-// Callback class for ray casts.
-// See b2World::RayCast
-// Called for each shape found in the query. You control how the ray cast
-// proceeds by returning a float:
-// return -1: ignore this shape and continue
-// return 0: terminate the ray cast
-// return fraction: clip the ray to this point
-// return 1: don't clip the ray and continue
-// @param shape the shape hit by the ray
-// @param point the point of initial intersection
-// @param normal the normal vector at the point of intersection
-// @param fraction the fraction along the ray at the point of intersection
-// @return -1 to filter, 0 to terminate, fraction to clip the ray for
-// closest hit, 1 to continue
-Ray_Result_Fcn :: #type proc "c" (shape: Shape_ID, point, normal: Vec2, fraction: f32, context_: rawptr) -> f32
-
-/// Use an instance of this structure and the callback below to get the closest hit.
-Ray_Result :: struct
-{
-	shape_id: Shape_ID,
-	point,
-	normal: Vec2,
-	fraction: f32,
-	hit: bool,
-}
-
-EMPTY_RAY_RESULT :: Ray_Result {
-	NULL_SHAPE_ID,
-	{0, 0},
-	{0, 0},
-	0,
-	false,
 }

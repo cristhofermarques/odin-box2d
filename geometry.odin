@@ -11,12 +11,6 @@ Mass_Data :: struct
 
 	// The rotational inertia of the shape about the local origin.
 	i: f32,
-
-	// Distance from shape centroid to closest point on perimeter.
-	min_extent,
-
-	// Distance from shape origin to furthest point on perimeter.
-	max_extent: f32,
 }
 
 // A solid circle
@@ -35,8 +29,12 @@ Capsule :: struct
 
 // A solid convex polygon. It is assumed that the interior of the polygon is to
 // the left of each edge.
-// Polygons have a maximum number of vertices equal to _maxPolygonVertices.
+//
+// Polygons have a maximum number of vertices equal to MAX_POLYGON_VERTICES.
+//
 // In most cases you should not need many vertices for a convex polygon.
+// * Warning DO NOT fill this out manually, instead use a helper function like
+// make_polygon or make_box.
 Polygon :: struct
 {
 	vertices: [MAX_POLYGON_VERTICES]Vec2,
@@ -53,17 +51,20 @@ Segment :: struct
 }
 
 // A smooth line segment with one-sided collision. Only collides on the right side.
-// Normally these are generated from a chain shape.
+//
+// Several of these are generated for a chain shape.
 // ghost1 -> point1 -> point2 -> ghost2
-// This is only relevant for contact manifolds, otherwise use a regular segment.
 Smooth_Segment :: struct
 {
 	// The tail ghost vertex
 	ghost1,
 
-	// The line segment
-	point1, point2,
+	/// The line segment
+	segment: Segment,
 
 	// The head ghost vertex
-	ghost2: Vec2
+	ghost2: Vec2,
+
+	// The owning chain shape index (internal usage only)
+	chain_index: i32,
 }

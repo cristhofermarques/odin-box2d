@@ -1,7 +1,6 @@
 package box2d
 
 NULL_FEATURE :: max(u8)
-MAX_MANIFOLD_POINTS :: 2
 
 make_id :: #force_inline proc "contextless" (a, b: $T) -> u16
 {
@@ -15,6 +14,9 @@ Manifold_Point :: struct
 {
 	// world coordinates of contact point
 	point: Vec2,
+
+	// body anchors used by solver internally
+	anchor_a, anchor_b: Vec2,
 
 	// the separation of the contact point, negative if penetrating
 	separation,
@@ -35,7 +37,7 @@ Manifold_Point :: struct
 // Conact manifold convex shapes.
 Manifold :: struct
 {
-	points :[MAX_MANIFOLD_POINTS]Manifold_Point,
+	points: [2]Manifold_Point,
 	normal: Vec2,
 	point_count: i32,
 }

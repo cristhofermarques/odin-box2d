@@ -27,13 +27,6 @@ Mat22 :: struct
 	cx, cy: Vec2,
 }
 
-// A 3-by-3 Matrix
-Mat33 :: struct
-{
-	// columns
-	cx, cy, cz: Vec3,
-}
-
 // Axis-aligned bounding box
 AABB :: struct
 {
@@ -69,19 +62,25 @@ Ray_Cast_Output :: struct
 }
 
 // Task interface
+//
 // This is prototype for a Box2D task. Your task system is expected to invoke the Box2D task with these arguments.
+//
 // The task spans a range of the parallel-for: [startIndex, endIndex)
+//
 // The thread index must correctly identify each thread in the user thread pool, expected in [0, workerCount)
+//
 // The task context is the context pointer sent from Box2D when it is enqueued.
 Task_Callback :: #type proc "c" (start_index, end_index: i32, thread_index: u32, task_context: rawptr)
 
 // These functions can be provided to Box2D to invoke a task system. These are designed to work well with enkiTS.
+//
 // Returns a pointer to the user's task object. May be nullptr.
-Enqueue_Task_Callback :: #type proc "c" (task: Task_Callback, item_count, min_range: i32, task_context, user_context: rawptr) -> rawptr
+Enqueue_Task_Callback :: #type proc "c" (task: ^Task_Callback, item_count, min_range: i32, task_context, user_context: rawptr) -> rawptr
 
 // Finishes a user task object that wraps a Box2D task.
 Finish_Task_Callback :: #type proc "c" (user_task, user_context: rawptr)
 
+// World definition used to create a simulation world. Must be initialized using DEFAULT_WORLD_DEF.
 World_Def :: struct
 {
 	// Gravity vector. Box2D has no up-vector defined.
@@ -125,6 +124,25 @@ World_Def :: struct
 	enqueue_task: Enqueue_Task_Callback,
 	finish_task: Finish_Task_Callback,
 	user_task_context: rawptr,
+}
+
+// Make a world definition with default values.
+DEFAULT_WORLD_DEF :: World_Def {
+	{0, -10},
+	1.0 * LENGTH_UNITS_PER_METER,
+	3.0 * LENGTH_UNITS_PER_METER,
+	30.0,
+	1.0,
+	true,
+	0,
+	0,
+	0,
+	0,
+	1024 * 1024,
+	0,
+	nil,
+	nil,
+	nil,
 }
 
 // The body type.
@@ -189,6 +207,23 @@ Body_Def :: struct
 	is_enabled: bool
 }
 
+// Use this to initialize your body definition
+DEFAULT_BODY_DEF :: Body_Def {
+	.Static,
+	{0, 0},
+	0,
+	{0, 0},
+	0,
+	0,
+	0,
+	1,
+	nil,
+	true,
+	true,
+	false,
+	true,
+}
+
 // This holds contact filtering data.
 Filter :: struct
 {
@@ -205,6 +240,9 @@ Filter :: struct
 	group_index: i32,
 }
 
+// Use this to initialize your filter
+DEFAULT_FILTER :: Filter{0x00000001, 0xFFFFFFFF, 0}
+
 // This holds contact filtering data.
 Query_Filter :: struct
 {
@@ -216,7 +254,18 @@ Query_Filter :: struct
 	mask_bits: u32,
 }
 
+// Use this to initialize your query filter
 DEFAULT_QUERY_FILTER :: Query_Filter{0x00000001, 0xFFFFFFFF};
+
+// Shape type
+Shape_Type :: enum i32
+{
+	Capsule,
+	Circle,
+	Polygon,
+	Segment,
+	Smooth_Segment,
+}
 
 // Used to create a shape
 Shape_Def :: struct
@@ -238,11 +287,31 @@ Shape_Def :: struct
 
 	// A sensor shape collects contact information but never generates a collision
 	// response.
-	is_sensor: bool,
+	is_sensor,
 
+	// Enable sensor events for this shape. Only applies to kinematic and dynamic bodies. Ignored for sensors.
+	enable_sensor_events,
+
+	// Enable contact events for this shape. Only applies to kinematic and dynamic bodies. Ignored for sensors.
+	enable_contact_events,
+
+	// Enable pre-solve contact events for this shape. Only applies to dynamic bodies. These are expensive
+	// and must be carefully handled due to multi-threading. Ignored for sensors.
+	enable_pre_solve_events: bool,
 }
 
-DEFAULT_FILTER :: Filter{0x00000001, 0xFFFFFFFF, 0}
+// Use this to initialize your shape definition
+DEFAULT_SHAPE_DEF :: Shape_Def {
+	nil,
+	0.6,
+	0,
+	1,
+	DEFAULT_FILTER,
+	false,
+	true,
+	true,
+	false,
+}
 
 // Used to create a chain of edges. This is designed to eliminate ghost collisions with some limitations.
 // - DO NOT use chain shapes unless you understand the limitations. This is an advanced feature!
@@ -280,52 +349,7 @@ Chain_Def :: struct
 	filter: Filter,
 }
 
-// Make a world definition with default values.
-DEFAULT_WORLD_DEF :: World_Def{
-	{0, -10},
-	1.0 * 1,
-	3.0 * 1,
-	30.0,
-	1.0,
-	true,
-	8,
-	8,
-	8,
-	8,
-	1024 * 1024,
-	0,
-	nil,
-	nil,
-	nil,
-	//nil,
-}
-
-// Make a body definition with default values.
-DEFAULT_BODY_DEF :: Body_Def{
-	.Static,
-	{0, 0},
-	0,
-	{0, 0},
-	0,
-	0,
-	0,
-	1,
-	nil,
-	true,
-	true,
-	false,
-	true,
-}
-
-DEFAULT_SHAPE_DEF :: Shape_Def {
-	nil,
-	0.6,
-	0,
-	0,
-	DEFAULT_FILTER,
-	false,
-}
-
+// Use this to initialize your chain definition
 DEFAULT_CHAIN_DEF :: Chain_Def {
 	nil,
 	0,
@@ -334,4 +358,34 @@ DEFAULT_CHAIN_DEF :: Chain_Def {
 	0.6,
 	0.0,
 	DEFAULT_FILTER,
+}
+
+// Profiling data. Times are in milliseconds.
+Profile :: struct
+{
+	step,
+	pairs,
+	collide,
+	solve,
+	build_islands,
+	solve_constraints,
+	broadphase,
+	continuous: f32,
+}
+
+// Counters that give details of the simulation size
+Counters :: struct
+{
+	island_count,
+	body_count,
+	contact_count,
+	joint_count,
+	proxy_count,
+	pair_count,
+	tree_height,
+	stack_capacity,
+	stack_used,
+	byte_count,
+	task_count: i32,
+	color_counts: [GRAPH_COLORS_COUNT + 1]i32,
 }

@@ -1,5 +1,6 @@
 package box2d
 
+// Result of computing the distance between two line segments
 Segment_Distance_Result :: struct
 {
 	closest1,
@@ -9,8 +10,7 @@ Segment_Distance_Result :: struct
 	distance_squared: f32,
 }
 
-// A distance proxy is used by the GJK algorithm.
-// It encapsulates any shape.
+/// A distance proxy is used by the GJK algorithm. It encapsulates any shape.
 Distance_Proxy :: struct
 {
 	vertices: [MAX_POLYGON_VERTICES]Vec2,
@@ -18,7 +18,7 @@ Distance_Proxy :: struct
 	radius: f32,
 }
 
-// Used to warm start b2Distance.
+// Used to warm start distance.
 // Set count to zero on first call.
 Distance_Cache :: struct
 {
@@ -77,7 +77,7 @@ Sweep :: struct
 	a1, a2: f32,
 }
 
-// Input parameters for b2TimeOfImpact
+// Input parameters for time_of_impact
 TOI_Input :: struct
 {
 	proxy_a,
@@ -89,7 +89,8 @@ TOI_Input :: struct
 	t_max: f32
 }
 
-TOI_State :: enum
+// Describes the TOI output
+TOI_State :: enum i32
 {
 	Unknown,
 	Failed,
@@ -98,7 +99,7 @@ TOI_State :: enum
 	Separated
 }
 
-// Output parameters for b2TimeOfImpact.
+// Output parameters for time_of_impact.
 TOI_Output :: struct
 {
 	state: TOI_State,

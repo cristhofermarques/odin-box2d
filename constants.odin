@@ -1,26 +1,18 @@
 package box2d
 
 // box2d bases all length units on meters, but you may need different units for your game.
+//
 // You can override this value to use different units.
 LENGTH_UNITS_PER_METER :: #config(BOX2D_LENGTH_UNITS_PER_METER, 1)
 
-// Constants used by box2d.
-// box2d uses meters-kilograms-seconds (MKS) units. Angles are always in radians unless
-// degrees are indicated.
-// Some values can be overridden with a define and some values can be modified at runtime.
-// Other values cannot be modified without causing stability and/or performance problems.
-
-// box2d bases all length units on meters, but you may need different units for your game.
-// You can adjust this value to use different units, normally at application startup.
-// @(export, link_name="b2_lengthUnitsPerMeter")
-// length_units_per_meter: f32 = LENGTH_UNITS_PER_METER
-
+// https://en.wikipedia.org/wiki/Pi
 PI :: 3.14159265359
 
 // This is used to fatten AABBs in the dynamic tree. This allows proxies
 // to move by a small amount without triggering a tree adjustment.
+//
 // This is in meters.
-// @warning modifying this can have a significant impact on performance
+// * Warning modifying this can have a significant impact on performance
 AABB_MARGIN :: 0.1 * LENGTH_UNITS_PER_METER
 
 // A small length used as a collision and constraint tolerance. Usually it is
@@ -30,32 +22,27 @@ LINEAR_SLOP :: 0.005 * LENGTH_UNITS_PER_METER
 
 // A small angle used as a collision and constraint tolerance. Usually it is
 // chosen to be numerically significant, but visually insignificant.
-// @warning modifying this can have a significant impact on stability
+// * Warning modifying this can have a significant impact on stability
 ANGULAR_SLOP :: 2 / 180 * PI
 
-// The maximum number of vertices on a convex polygon. You cannot increase
-// this too much because b2BlockAllocator has a maximum object size.
-// You may define this externally.
+// The maximum number of vertices on a convex polygon. Changing this affects performance even if you
+// don't use more vertices.
 MAX_POLYGON_VERTICES :: #config(BOX2D_MAX_POLYGON_VERTICES, 8)
 
 // Maximum number of simultaneous worlds that can be allocated
-// You may define this externally.
-MAX_WORLDS :: #config(BOX2D_MAX_WORLDS, 32)
+MAX_WORLDS :: #config(BOX2D_MAX_WORLDS, 128)
 
 // The maximum linear translation of a body per step. This limit is very large and is used
 // to prevent numerical problems. You shouldn't need to adjust this. Meters.
-// @warning modifying this can have a significant impact on stability
+// * Warning modifying this can have a significant impact on stability
 MAX_TRANSLATION :: 4.0 * LENGTH_UNITS_PER_METER
-MAX_TRANSLATION_SQUARED :: MAX_TRANSLATION * MAX_TRANSLATION
 
 // The maximum angular velocity of a body. This limit is very large and is used
 // to prevent numerical problems. You shouldn't need to adjust this.
-// @warning modifying this can have a significant impact on stability
+// * Warning modifying this can have a significant impact on stability
 MAX_ROTATION :: 0.5 * PI
-MAX_ROTATION_SQUARED :: MAX_ROTATION * MAX_ROTATION
 
-// TODO_ERIN make dynamic based on speed?
-// @warning modifying this can have a significant impact on stability
+// * Warning modifying this can have a significant impact on performance and stability
 SPECULATIVE_DISTANCE :: 4.0 * LINEAR_SLOP
 
 // The time that a body must be still before it will go to sleep. In seconds.
@@ -77,6 +64,8 @@ MAX_WORKERS :: 64
 // Solver graph coloring
 GRAPH_COLORS_COUNT :: 12
 
+// Version numbering scheme.
+// See http://en.wikipedia.org/wiki/Software_versioning
 Version :: struct
 {
 	// significant changes
@@ -88,3 +77,6 @@ Version :: struct
 	// bug fixes
 	revision: i32,
 }
+
+// Current version.
+VERSION :: Version{3, 0, 0}

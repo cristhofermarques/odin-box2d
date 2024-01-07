@@ -28,7 +28,7 @@ Debug_Draw :: struct
     draw_segment: proc "c" (p1, p2: Vec2, color: Color, context_: rawptr),
     
 	// Draw a transform. Choose your own length scale.
-	// @param xf a transform.
+	// - param xf a transform.
     draw_transform: proc "c" (xf: Transform, context_: rawptr),
     
 	// Draw a point.
@@ -39,8 +39,12 @@ Debug_Draw :: struct
 
 	draw_shapes,
 	draw_joints,
-	draw_aabbs,
+	draw_aab_bs,
 	draw_mass,
-	draw_graph_colors: bool,
+	draw_contacts,
+	draw_graph_colors,
+	draw_contact_normals,
+	draw_contact_impulses,
+	draw_friction_impulses: bool,
 	context_: rawptr,
 }

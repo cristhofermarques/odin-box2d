@@ -1,21 +1,5 @@
 package box2d
 
-/// Profiling data. Times are in milliseconds.
-/// TODO_ERIN change to ticks due to variable frequency
-Profile :: struct
-{
-	step,
-	pairs,
-	collide,
-	solve,
-	build_islands,
-	solve_islands,
-	broadphase,
-	continuous: f32,
-}
-
-EMPTY_PROFILE :: Profile{}
-
 Statistics :: struct
 {
 	island_count,
@@ -39,8 +23,7 @@ when ODIN_OS == .Windows
         start: i64,
     }
 }
-
-when ODIN_OS == .Linux
+else when ODIN_OS == .Linux
 {
     /// Timer for profiling. This has platform specific code and may
     /// not work on every platform.
@@ -48,5 +31,14 @@ when ODIN_OS == .Linux
     {
         start_sec,
         start_usec: u64,
+    }
+}
+else
+{
+    /// Timer for profiling. This has platform specific code and may
+    /// not work on every platform.
+    Timer :: struct
+    {
+        dummy: i32,
     }
 }
