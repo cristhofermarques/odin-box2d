@@ -2,7 +2,7 @@
 
 Box2D 3.0 https://github.com/erincatto/box2c
 
-Current commit: https://github.com/erincatto/box2c/commit/b023817fc63a40137f3aed20eb04a8c01f108e9c
+Current commit: https://github.com/erincatto/box2c/commit/f4a72f13ce83c69f3ab37a6fff26903f7ab83e30
 
 Included platform binaries:
 * windows_amd64
