@@ -41,6 +41,7 @@ Polygon :: struct
 {
 	vertices: [MAX_POLYGON_VERTICES]Vec2,
 	normals: [MAX_POLYGON_VERTICES]Vec2,
+	centroid: Vec2,
 	radius: f32,
 	count: i32,
 }
