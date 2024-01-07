@@ -82,9 +82,6 @@ Enqueue_Task_Callback :: #type proc "c" (task: Task_Callback, item_count, min_ra
 // Finishes a user task object that wraps a Box2D task.
 Finish_Task_Callback :: #type proc "c" (user_task, user_context: rawptr)
 
-// Finishes all tasks.
-Finish_All_Tasks_Callback :: #type proc "c" (user_context: rawptr)
-
 World_Def :: struct
 {
 	// Gravity vector. Box2D has no up-vector defined.
@@ -127,7 +124,6 @@ World_Def :: struct
 	worker_count: u32,
 	enqueue_task: Enqueue_Task_Callback,
 	finish_task: Finish_Task_Callback,
-	finish_all_tasks: Finish_All_Tasks_Callback,
 	user_task_context: rawptr,
 }
 
@@ -135,7 +131,7 @@ World_Def :: struct
 // static: zero mass, zero velocity, may be manually moved
 // kinematic: zero mass, non-zero velocity set by user, moved by solver
 // dynamic: positive mass, non-zero velocity determined by forces, moved by solver
-Body_Type :: enum u32
+Body_Type :: enum i32
 {
 	Static = 0,
 	Kinematic = 1,
@@ -301,7 +297,7 @@ DEFAULT_WORLD_DEF :: World_Def{
 	nil,
 	nil,
 	nil,
-	nil,
+	//nil,
 }
 
 // Make a body definition with default values.
